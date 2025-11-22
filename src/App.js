@@ -605,7 +605,7 @@ const RelatoriosTab = () => {
 const ConteudoScreen = ({ setScreen }) => {
   const conteudos = [
     { icon: Info, titulo: 'O que é Dependência de Internet ?', cor: 'bg-blue-500', rota: 'o-que-e-di' },
-    { icon: Users, titulo: 'Como identificar alguém com Dependência de Internet ?', cor: 'bg-green-500', rota: 'como-dentificar' },
+    { icon: Users, titulo: 'Como identificar alguém com Dependência de Internet ?', cor: 'bg-green-500', rota: 'como-identificar' },
     { icon: Heart, titulo: 'Como ajudar alguém com Dependência de Internet ?', cor: 'bg-red-500', rota: null },
     { icon: TrendingUp, titulo: 'Dados e estatísticas', cor: 'bg-purple-500', rota: null },
     { icon: Calendar, titulo: 'Notícias e eventos', cor: 'bg-orange-500', rota: 'noticias' }
