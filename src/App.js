@@ -13,13 +13,16 @@ const App = () => {
 
   const screens = {
     home: <HomeScreen setScreen={setCurrentScreen} />,
+    'login-familiar': <LoginFamiliarScreen setScreen={setCurrentScreen} />,
     familiar: <FamiliarScreen formData={formData} setFormData={setFormData} submitted={submitted} setSubmitted={setSubmitted} setScreen={setCurrentScreen} />,
     instituicao: <InstituicaoScreen setScreen={setCurrentScreen} />,
     conteudo: <ConteudoScreen setScreen={setCurrentScreen} />,
     noticias: <NoticiasScreen setScreen={setCurrentScreen} />,
     sobre: <SobreScreen setScreen={setCurrentScreen} />,
-    'o-que-e-di': <OQueEDIScreen setScreen={setCurrentScreen} /> ,
-    'como-identificar': <ComoIdentificarScreen setScreen={setCurrentScreen} />
+    'o-que-e-di': <OQueEDIScreen setScreen={setCurrentScreen} />,
+    'como-identificar': <ComoIdentificarScreen setScreen={setCurrentScreen} />,
+    'como-ajudar': <ComoAjudarScreen setScreen={setCurrentScreen} />,
+    'dados-estatisticas': <DadosEstatisticasScreen setScreen={setCurrentScreen} />
   };
 
   return (
@@ -74,7 +77,7 @@ const HomeScreen = ({ setScreen }) => {
         
         <div className="space-y-4 mb-6">
           <button 
-            onClick={() => setScreen('familiar')}
+            onClick={() => setScreen('login-familiar')}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
           >
             <Users className="w-5 h-5" />
@@ -109,14 +112,227 @@ const HomeScreen = ({ setScreen }) => {
   );
 };
 
+const LoginFamiliarScreen = ({ setScreen }) => {
+  const [activeTab, setActiveTab] = useState('login');
+  const [loginData, setLoginData] = useState({ email: '', senha: '' });
+  const [cadastroData, setCadastroData] = useState({
+    nome: '',
+    email: '',
+    senha: '',
+    confirmarSenha: '',
+    relacao: ''
+  });
+
+  const handleLogin = () => {
+    if (loginData.email && loginData.senha) {
+      // Aqui você conectará com sua API de autenticação
+      alert('Login realizado com sucesso!');
+      setScreen('familiar');
+    } else {
+      alert('Por favor, preencha email e senha');
+    }
+  };
+
+  const handleCadastro = () => {
+    if (!cadastroData.nome || !cadastroData.email || !cadastroData.senha || !cadastroData.relacao) {
+      alert('Por favor, preencha todos os campos');
+      return;
+    }
+    if (cadastroData.senha !== cadastroData.confirmarSenha) {
+      alert('As senhas não coincidem');
+      return;
+    }
+    if (cadastroData.senha.length < 6) {
+      alert('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+    // Aqui você conectará com sua API de cadastro
+    alert('Cadastro realizado com sucesso!');
+    setScreen('familiar');
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-blue-100">
+      <div className="max-w-xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <button 
+          onClick={() => setScreen('home')}
+          className="text-blue-600 hover:text-blue-800 m-6 flex items-center gap-2 font-semibold"
+        >
+          ← Voltar
+        </button>
+
+        <div className="px-8 pb-8">
+          <div className="flex justify-center mb-6">
+            <Users className="w-16 h-16 text-blue-600" />
+          </div>
+          
+          <h2 className="text-3xl font-bold text-center text-blue-900 mb-2">
+            Área de Familiares e Amigos
+          </h2>
+          <p className="text-center text-gray-600 mb-8">
+            Faça login ou crie sua conta para compartilhar sua experiência
+          </p>
+
+          {/* Tabs */}
+          <div className="flex border-b-2 border-gray-200 mb-6">
+            <button
+              onClick={() => setActiveTab('login')}
+              className={`flex-1 py-3 font-semibold transition-all ${
+                activeTab === 'login'
+                  ? 'text-blue-600 border-b-2 border-blue-600 -mb-0.5'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Entrar
+            </button>
+            <button
+              onClick={() => setActiveTab('cadastro')}
+              className={`flex-1 py-3 font-semibold transition-all ${
+                activeTab === 'cadastro'
+                  ? 'text-blue-600 border-b-2 border-blue-600 -mb-0.5'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Criar Conta
+            </button>
+          </div>
+
+          {/* Conteúdo das Tabs */}
+          {activeTab === 'login' ? (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  E-mail
+                </label>
+                <input
+                  type="email"
+                  value={loginData.email}
+                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                  placeholder="seu@email.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Senha
+                </label>
+                <input
+                  type="password"
+                  value={loginData.senha}
+                  onChange={(e) => setLoginData({ ...loginData, senha: e.target.value })}
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <button
+                onClick={handleLogin}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold transition-all shadow-lg"
+              >
+                Entrar
+              </button>
+
+              <button className="w-full text-blue-600 hover:text-blue-800 text-sm underline">
+                Esqueci minha senha
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Nome Completo
+                </label>
+                <input
+                  type="text"
+                  value={cadastroData.nome}
+                  onChange={(e) => setCadastroData({ ...cadastroData, nome: e.target.value })}
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                  placeholder="Seu nome"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  E-mail
+                </label>
+                <input
+                  type="email"
+                  value={cadastroData.email}
+                  onChange={(e) => setCadastroData({ ...cadastroData, email: e.target.value })}
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                  placeholder="seu@email.com"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Relação com o dependente
+                </label>
+                <select
+                  value={cadastroData.relacao}
+                  onChange={(e) => setCadastroData({ ...cadastroData, relacao: e.target.value })}
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                >
+                  <option value="">Selecione...</option>
+                  <option value="pai-mae">Pai/Mãe</option>
+                  <option value="irmao-irma">Irmão/Irmã</option>
+                  <option value="filho-filha">Filho/Filha</option>
+                  <option value="conjuge">Cônjuge/Companheiro(a)</option>
+                  <option value="amigo">Amigo(a)</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Senha (mínimo 6 caracteres)
+                </label>
+                <input
+                  type="password"
+                  value={cadastroData.senha}
+                  onChange={(e) => setCadastroData({ ...cadastroData, senha: e.target.value })}
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Confirmar Senha
+                </label>
+                <input
+                  type="password"
+                  value={cadastroData.confirmarSenha}
+                  onChange={(e) => setCadastroData({ ...cadastroData, confirmarSenha: e.target.value })}
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <button
+                onClick={handleCadastro}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold transition-all shadow-lg"
+              >
+                Criar Conta
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const FamiliarScreen = ({ formData, setFormData, submitted, setSubmitted, setScreen }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ convivencia: '', mudancas: '', ajuda: '' });
-    }, 4000);
+  const handleSubmit = () => {
+    if (formData.convivencia && formData.mudancas && formData.ajuda) {
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ convivencia: '', mudancas: '', ajuda: '' });
+      }, 4000);
+    }
   };
 
   if (submitted) {
@@ -157,11 +373,11 @@ const FamiliarScreen = ({ formData, setFormData, submitted, setSubmitted, setScr
         
         <div className="bg-blue-50 border-l-4 border-blue-600 p-4 mb-8 rounded">
           <p className="text-gray-700">
-            ℹ️ As informações são anônimas e usadas apenas para fins de pesquisa.
+            ℹ️ As informações são usadas apenas para fins de pesquisa.
           </p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
               Como é a convivência com o dependente?
@@ -171,7 +387,6 @@ const FamiliarScreen = ({ formData, setFormData, submitted, setSubmitted, setScr
               onChange={(e) => setFormData({...formData, convivencia: e.target.value})}
               className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none min-h-32 resize-y"
               placeholder="Descreva sua experiência..."
-              required
             />
           </div>
           
@@ -184,7 +399,6 @@ const FamiliarScreen = ({ formData, setFormData, submitted, setSubmitted, setScr
               onChange={(e) => setFormData({...formData, mudancas: e.target.value})}
               className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none min-h-32 resize-y"
               placeholder="Mudanças observadas..."
-              required
             />
           </div>
           
@@ -197,18 +411,17 @@ const FamiliarScreen = ({ formData, setFormData, submitted, setSubmitted, setScr
               onChange={(e) => setFormData({...formData, ajuda: e.target.value})}
               className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:outline-none min-h-32 resize-y"
               placeholder="Fatores que influenciam..."
-              required
             />
           </div>
           
           <button 
-            type="submit"
+            onClick={handleSubmit}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
           >
             <Send className="w-5 h-5" />
             Enviar Relato
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
@@ -220,19 +433,18 @@ const InstituicaoScreen = ({ setScreen }) => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleLogin = () => {
+    // Simulação de login - aqui você conectará com sua API
     if (email && senha) {
       setLoggedIn(true);
-    } else {
-      alert('Por favor, preencha email e senha');
     }
   };
 
-  // Renderiza dashboard se estiver logado
+  // Dashboard após login
   if (loggedIn) {
     return <DashboardInstitucional setScreen={setScreen} setLoggedIn={setLoggedIn} email={email} />;
   }
 
-  // Renderiza formulário de login se não estiver logado
+  // Tela de login
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full bg-white rounded-3xl shadow-2xl p-8 md:p-12">
@@ -285,6 +497,8 @@ const InstituicaoScreen = ({ setScreen }) => {
             Entrar
           </button>
         </div>
+        
+
       </div>
     </div>
   );
@@ -605,9 +819,9 @@ const RelatoriosTab = () => {
 const ConteudoScreen = ({ setScreen }) => {
   const conteudos = [
     { icon: Info, titulo: 'O que é Dependência de Internet ?', cor: 'bg-blue-500', rota: 'o-que-e-di' },
-    { icon: Users, titulo: 'Como identificar alguém com Dependência de Internet ?', cor: 'bg-green-500', rota: 'como-identificar' },
-    { icon: Heart, titulo: 'Como ajudar alguém com Dependência de Internet ?', cor: 'bg-red-500', rota: null },
-    { icon: TrendingUp, titulo: 'Dados e estatísticas', cor: 'bg-purple-500', rota: null },
+    { icon: Users, titulo: 'Como identificar a Dependência de Internet ?', cor: 'bg-green-500', rota: 'como-identificar' },
+    { icon: Heart, titulo: 'Como ajudar quem possui Dependência de Interenet ?', cor: 'bg-red-500', rota: 'como-ajudar' },
+    { icon: TrendingUp, titulo: 'Dados e estatísticas', cor: 'bg-purple-500', rota: 'dados-estatisticas' },
     { icon: Calendar, titulo: 'Notícias e eventos', cor: 'bg-orange-500', rota: 'noticias' }
   ];
 
@@ -635,7 +849,7 @@ const ConteudoScreen = ({ setScreen }) => {
             return (
               <button 
                 key={index}
-                 onClick={() => item.rota && setScreen(item.rota)}
+                onClick={() => item.rota && setScreen(item.rota)}
                 className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all transform hover:scale-105"
               >
                 <div className={`${item.cor} w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto`}>
@@ -678,7 +892,7 @@ const OQueEDIScreen = ({ setScreen }) => {
                 <Info className="w-8 h-8" />
               </div>
               <h1 className="text-3xl md:text-4xl font-bold">
-                O que é Dependência de Internet ?
+                O que é Dependência de Internet?
               </h1>
             </div>
             <p className="text-blue-100 text-lg">
@@ -803,7 +1017,7 @@ const OQueEDIScreen = ({ setScreen }) => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button 
-                  onClick={() => setScreen('familiar')}
+                  onClick={() => setScreen('login-familiar')}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg"
                 >
                   Compartilhar Experiência
@@ -839,8 +1053,11 @@ const ComoIdentificarScreen = ({ setScreen }) => {
   };
 
   const calcularResultado = () => {
+    const totalRespostas = Object.keys(respostas).length;
+    if (totalRespostas < perguntasAutoavaliacao.length) return null;
+    
     const total = Object.values(respostas).filter(r => r === 'sim').length;
-    if (total === 0) return null;
+    if (total === 0) return { cor: 'green', texto: 'Uso aparentemente saudável', emoji: '✅' };
     if (total <= 1) return { cor: 'green', texto: 'Uso aparentemente saudável', emoji: '✅' };
     if (total <= 3) return { cor: 'yellow', texto: 'Atenção recomendada', emoji: '⚠️' };
     return { cor: 'red', texto: 'Procure ajuda profissional', emoji: '🚨' };
@@ -1067,7 +1284,7 @@ const ComoIdentificarScreen = ({ setScreen }) => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button 
-                  onClick={() => setScreen('familiar')}
+                  onClick={() => setScreen('login-familiar')}
                   className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg"
                 >
                   Compartilhar Experiência
@@ -1075,6 +1292,578 @@ const ComoIdentificarScreen = ({ setScreen }) => {
                 <button 
                   onClick={() => setScreen('conteudo')}
                   className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-all"
+                >
+                  Ver Mais Conteúdos
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ComoAjudarScreen = ({ setScreen }) => {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 py-12 px-6">
+      <div className="max-w-5xl mx-auto">
+        <button 
+          onClick={() => setScreen('conteudo')}
+          className="text-red-600 hover:text-red-800 mb-6 flex items-center gap-2 font-semibold"
+        >
+          ← Voltar aos Conteúdos
+        </button>
+
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-red-600 to-pink-600 text-white p-8 md:p-12">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <Heart className="w-8 h-8" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold">
+                Como Ajudar Alguém com Dependência de Internet
+              </h1>
+            </div>
+            <p className="text-red-100 text-lg">
+              Estratégias práticas e sensíveis para apoiar quem você ama
+            </p>
+          </div>
+
+          {/* Conteúdo */}
+          <div className="p-8 md:p-12 space-y-8">
+            {/* Introdução */}
+            <section>
+              <p className="text-gray-700 text-lg leading-relaxed">
+                Ajudar alguém com dependência de internet exige sensibilidade, compreensão e estratégias práticas. Muitas vezes, a pessoa não percebe o impacto do comportamento ou tem dificuldade de admitir o problema. Por isso, o apoio de alguém próximo pode fazer grande diferença.
+              </p>
+            </section>
+
+            {/* 1. Compreenda o Problema */}
+            <section className="bg-blue-50 rounded-2xl p-6 md:p-8 border-l-4 border-blue-600">
+              <h2 className="text-2xl font-bold text-blue-900 mb-4 flex items-center gap-3">
+                <span className="text-3xl">🧠</span>
+                1. Compreenda o Problema
+              </h2>
+              <p className="text-gray-700 text-lg leading-relaxed">
+                Antes de agir, é importante entender que a dependência de internet não é simplesmente "falta de força de vontade". Ela envolve fatores emocionais, comportamentais e até biológicos. Abordagens agressivas ou julgamentos tendem a afastar a pessoa em vez de ajudar.
+              </p>
+            </section>
+
+            {/* 2. Converse com Empatia */}
+            <section className="bg-purple-50 rounded-2xl p-6 md:p-8 border-l-4 border-purple-600">
+              <h2 className="text-2xl font-bold text-purple-900 mb-4 flex items-center gap-3">
+                <span className="text-3xl">💬</span>
+                2. Converse com Empatia
+              </h2>
+              <p className="text-gray-700 text-lg mb-4">
+                Uma conversa tranquila pode ser o primeiro passo:
+              </p>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Escolha um momento adequado, sem conflitos.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Fale sobre o que observou sem acusar ou pressionar.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Demonstre preocupação genuína, não crítica.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-purple-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Deixe claro que está disponível para ajudar.</span>
+                </li>
+              </ul>
+              <div className="bg-purple-100 rounded-lg p-4">
+                <p className="text-purple-900 font-medium mb-2">💡 Exemplo de abordagem:</p>
+                <p className="text-purple-800 italic">
+                  "Percebi que você tem passado muito tempo online e parece estar te afetando. Quero entender melhor e te ajudar, se você quiser."
+                </p>
+              </div>
+            </section>
+
+            {/* 3. Ajude a Criar Limites Saudáveis */}
+            <section className="bg-green-50 rounded-2xl p-6 md:p-8 border-l-4 border-green-600">
+              <h2 className="text-2xl font-bold text-green-900 mb-4 flex items-center gap-3">
+                <span className="text-3xl">⏰</span>
+                3. Ajude a Criar Limites Saudáveis
+              </h2>
+              <p className="text-gray-700 text-lg mb-4">
+                Apoie a pessoa a estabelecer novas rotinas:
+              </p>
+              <ul className="space-y-3 mb-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Incentive pausas regulares durante o uso.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Sugira horários específicos para atividades digitais.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Ajude a organizar uma rotina equilibrada com estudo, lazer e descanso.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Estabeleçam juntos metas pequenas e realistas.</span>
+                </li>
+              </ul>
+              <p className="text-gray-700 font-medium">
+                Não se trata de "proibir", mas de reorganizar o uso de forma saudável.
+              </p>
+            </section>
+
+            {/* 4. Incentive Atividades Offline */}
+            <section className="bg-orange-50 rounded-2xl p-6 md:p-8 border-l-4 border-orange-600">
+              <h2 className="text-2xl font-bold text-orange-900 mb-4 flex items-center gap-3">
+                <span className="text-3xl">🌳</span>
+                4. Incentive Atividades Offline
+              </h2>
+              <p className="text-gray-700 text-lg mb-4">
+                Atividades fora do ambiente digital ajudam a reduzir a necessidade de estar sempre conectado:
+              </p>
+              <ul className="space-y-3 mb-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Caminhadas, exercícios físicos ou práticas esportivas.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Hobbies como leitura, culinária, artesanato, música.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Contato com amigos e familiares presencialmente.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-orange-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Participação em eventos, cursos ou atividades comunitárias.</span>
+                </li>
+              </ul>
+              <p className="text-gray-700 font-medium">
+                Quanto mais alternativas saudáveis, menor a tendência de voltar ao uso excessivo.
+              </p>
+            </section>
+
+            {/* 5. Ofereça Suporte Emocional */}
+            <section className="bg-pink-50 rounded-2xl p-6 md:p-8 border-l-4 border-pink-600">
+              <h2 className="text-2xl font-bold text-pink-900 mb-4 flex items-center gap-3">
+                <span className="text-3xl">❤️</span>
+                5. Ofereça Suporte Emocional
+              </h2>
+              <p className="text-gray-700 text-lg leading-relaxed mb-4">
+                A dependência muitas vezes está ligada a sentimentos de ansiedade, solidão, estresse ou problemas pessoais. Ajude a pessoa a falar sobre o que sente e, quando necessário, incentive-a a procurar apoio profissional.
+              </p>
+              <p className="text-gray-700 font-medium">
+                Escuta ativa, sem julgamentos, é essencial.
+              </p>
+            </section>
+
+            {/* 6. Estabeleça Limites no Ambiente Familiar */}
+            <section className="bg-indigo-50 rounded-2xl p-6 md:p-8 border-l-4 border-indigo-600">
+              <h2 className="text-2xl font-bold text-indigo-900 mb-4 flex items-center gap-3">
+                <span className="text-3xl">🏠</span>
+                6. Estabeleça Limites no Ambiente Familiar
+              </h2>
+              <p className="text-gray-700 text-lg mb-4">
+                No caso de filhos, irmãos ou convivência direta:
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <span className="text-indigo-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Combine regras familiares para o uso da internet.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-indigo-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Mantenha dispositivos fora do quarto durante a noite.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-indigo-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Crie momentos "sem telas" na rotina da casa (como refeições).</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-indigo-600 text-xl mt-1">•</span>
+                  <span className="text-gray-700">Seja exemplo: reduza também seu tempo online quando possível.</span>
+                </li>
+              </ul>
+            </section>
+
+            {/* 7. Busque Ajuda Profissional */}
+            <section className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-2xl p-6 md:p-8">
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
+                <span className="text-3xl">🩺</span>
+                7. Busque Ajuda Profissional
+              </h2>
+              <p className="text-white text-lg mb-4">
+                É recomendado procurar apoio especializado quando:
+              </p>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="text-2xl">•</span>
+                  <span>O uso está causando impactos sérios na vida da pessoa.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-2xl">•</span>
+                  <span>Há sintomas de ansiedade, depressão ou isolamento social.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-2xl">•</span>
+                  <span>A pessoa não consegue reduzir o uso mesmo com apoio.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-2xl">•</span>
+                  <span>Existem conflitos familiares frequentes devido ao assunto.</span>
+                </li>
+              </ul>
+              <p className="text-white mt-4 font-medium">
+                Psicólogos e terapeutas especializados em comportamentos digitais podem orientar o tratamento.
+              </p>
+            </section>
+
+            {/* 8. Tenha Paciência */}
+            <section className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-2xl p-6 md:p-8">
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
+                <span className="text-3xl">🌱</span>
+                8. Tenha Paciência e Incentive o Progresso
+              </h2>
+              <p className="text-white text-lg leading-relaxed">
+                A recuperação não é imediata. Pequenas mudanças já representam avanços importantes. Reconheça os esforços, celebre pequenas conquistas e continue oferecendo apoio.
+              </p>
+            </section>
+
+            {/* Frase Motivacional */}
+            <section className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 text-center border-2 border-purple-300">
+              <p className="text-2xl font-bold text-gray-900 italic mb-4">
+                "O amor e a compreensão são as ferramentas mais poderosas para ajudar alguém a se reconectar com a vida real."
+              </p>
+              <p className="text-gray-600">— Equipe Conexão Consciente</p>
+            </section>
+
+            {/* Call to Action */}
+            <section className="bg-gray-50 rounded-2xl p-6 md:p-8 text-center">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Está ajudando alguém ou precisa de orientação?
+              </h3>
+              <p className="text-gray-700 mb-6">
+                Compartilhe sua experiência ou busque mais recursos
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button 
+                  onClick={() => setScreen('login-familiar')}
+                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg"
+                >
+                  Compartilhar Experiência
+                </button>
+                <button 
+                  onClick={() => setScreen('conteudo')}
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-all"
+                >
+                  Ver Mais Conteúdos
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DadosEstatisticasScreen = ({ setScreen }) => {
+  const estatisticasGlobais = [
+    { numero: '6%', label: 'da população mundial', descricao: 'tem dependência de internet' },
+    { numero: '2-8h', label: 'por dia', descricao: 'tempo médio online de jovens' },
+    { numero: '41%', label: 'dos adolescentes', descricao: 'sentem ansiedade sem o celular' },
+    { numero: '70%', label: 'dos casos', descricao: 'começam antes dos 18 anos' }
+  ];
+
+  const dadosBrasil = [
+    { titulo: 'Redes Sociais', porcentagem: '89%', descricao: 'dos brasileiros acessam diariamente' },
+    { titulo: 'Jovens (16-24 anos)', porcentagem: '95%', descricao: 'estão sempre conectados' },
+    { titulo: 'Uso Problemático', porcentagem: '12-15%', descricao: 'da população brasileira' },
+    { titulo: 'Busca por Ajuda', porcentagem: '23%', descricao: 'reconhecem precisar de apoio' }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-12 px-6">
+      <div className="max-w-6xl mx-auto">
+        <button 
+          onClick={() => setScreen('conteudo')}
+          className="text-purple-600 hover:text-purple-800 mb-6 flex items-center gap-2 font-semibold"
+        >
+          ← Voltar aos Conteúdos
+        </button>
+
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white p-8 md:p-12">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-8 h-8" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold">
+                Dados e Estatísticas
+              </h1>
+            </div>
+            <p className="text-purple-100 text-lg">
+              Números que revelam a dimensão da dependência digital no mundo
+            </p>
+          </div>
+
+          {/* Conteúdo */}
+          <div className="p-8 md:p-12 space-y-12">
+            {/* Introdução */}
+            <section>
+              <p className="text-gray-700 text-lg leading-relaxed">
+                A dependência de internet é um fenômeno crescente em todo o mundo. Os dados revelam que milhões de pessoas são afetadas, especialmente jovens e adolescentes. Compreender os números ajuda a dimensionar o problema e reforça a importância de ações preventivas e de apoio.
+              </p>
+            </section>
+
+            {/* Estatísticas Globais - Cards Grandes */}
+            <section>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                <span className="text-4xl">🌍</span>
+                Cenário Mundial
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {estatisticasGlobais.map((stat, index) => (
+                  <div key={index} className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:scale-105">
+                    <div className="text-5xl font-bold mb-2">{stat.numero}</div>
+                    <div className="text-purple-100 font-semibold mb-1">{stat.label}</div>
+                    <div className="text-purple-200 text-sm">{stat.descricao}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Dados do Brasil */}
+            <section className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl p-8 md:p-10">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                <span className="text-4xl">🇧🇷</span>
+                Panorama Brasileiro
+              </h2>
+              
+              <div className="space-y-6">
+                {dadosBrasil.map((dado, index) => (
+                  <div key={index} className="bg-white rounded-xl p-6 shadow-md border-l-4 border-blue-600">
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">{dado.titulo}</h3>
+                        <p className="text-gray-600">{dado.descricao}</p>
+                      </div>
+                      <div className="text-4xl font-bold text-blue-600">{dado.porcentagem}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Faixas Etárias Mais Afetadas */}
+            <section className="bg-gradient-to-r from-orange-50 to-red-50 rounded-3xl p-8 md:p-10 border-2 border-orange-200">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span className="text-4xl">👥</span>
+                Faixas Etárias Mais Afetadas
+              </h2>
+              
+              <div className="space-y-4">
+                <div className="bg-white rounded-xl p-5 shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-gray-900">13-17 anos (Adolescentes)</span>
+                    <span className="text-2xl font-bold text-red-600">Alto Risco</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-4">
+                    <div className="bg-red-600 h-4 rounded-full" style={{width: '85%'}}></div>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-2">Maior vulnerabilidade devido ao desenvolvimento cerebral e pressão social</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-5 shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-gray-900">18-24 anos (Jovens Adultos)</span>
+                    <span className="text-2xl font-bold text-orange-600">Risco Elevado</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-4">
+                    <div className="bg-orange-600 h-4 rounded-full" style={{width: '72%'}}></div>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-2">Uso intenso de redes sociais e jogos online</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-5 shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-gray-900">25-34 anos (Adultos)</span>
+                    <span className="text-2xl font-bold text-yellow-600">Risco Moderado</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-4">
+                    <div className="bg-yellow-600 h-4 rounded-full" style={{width: '45%'}}></div>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-2">Equilíbrio entre trabalho e uso pessoal</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-5 shadow-sm">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-gray-900">35+ anos</span>
+                    <span className="text-2xl font-bold text-green-600">Risco Baixo</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-4">
+                    <div className="bg-green-600 h-4 rounded-full" style={{width: '28%'}}></div>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-2">Uso mais controlado e consciente</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Tipos de Dependência */}
+            <section>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+                <span className="text-4xl">📱</span>
+                Tipos Mais Comuns de Dependência Digital
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-pink-100 to-rose-100 rounded-2xl p-6 border-2 border-pink-300">
+                  <div className="text-3xl mb-3">📸</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Redes Sociais</h3>
+                  <div className="text-3xl font-bold text-pink-600 mb-2">48%</div>
+                  <p className="text-gray-700">Instagram, TikTok, Facebook, Twitter</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl p-6 border-2 border-blue-300">
+                  <div className="text-3xl mb-3">🎮</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Jogos Online</h3>
+                  <div className="text-3xl font-bold text-blue-600 mb-2">28%</div>
+                  <p className="text-gray-700">MMORPGs, Battle Royale, Mobile Games</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-100 to-violet-100 rounded-2xl p-6 border-2 border-purple-300">
+                  <div className="text-3xl mb-3">🎬</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Streaming de Vídeo</h3>
+                  <div className="text-3xl font-bold text-purple-600 mb-2">15%</div>
+                  <p className="text-gray-700">YouTube, Netflix, Twitch</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-6 border-2 border-green-300">
+                  <div className="text-3xl mb-3">💬</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Mensagens Instantâneas</h3>
+                  <div className="text-3xl font-bold text-green-600 mb-2">9%</div>
+                  <p className="text-gray-700">WhatsApp, Telegram, Discord</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Impactos na Saúde */}
+            <section className="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-3xl p-8 md:p-10">
+              <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+                <span className="text-4xl">⚕️</span>
+                Impactos na Saúde Reportados
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white bg-opacity-20 rounded-xl p-5 backdrop-blur-sm">
+                  <div className="text-4xl font-bold mb-2">78%</div>
+                  <p className="text-lg">Problemas de sono</p>
+                </div>
+                <div className="bg-white bg-opacity-20 rounded-xl p-5 backdrop-blur-sm">
+                  <div className="text-4xl font-bold mb-2">65%</div>
+                  <p className="text-lg">Ansiedade e estresse</p>
+                </div>
+                <div className="bg-white bg-opacity-20 rounded-xl p-5 backdrop-blur-sm">
+                  <div className="text-4xl font-bold mb-2">54%</div>
+                  <p className="text-lg">Dores musculares (postura)</p>
+                </div>
+                <div className="bg-white bg-opacity-20 rounded-xl p-5 backdrop-blur-sm">
+                  <div className="text-4xl font-bold mb-2">48%</div>
+                  <p className="text-lg">Problemas de visão</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Conscientização */}
+            <section className="bg-gradient-to-br from-green-50 to-teal-50 rounded-3xl p-8 md:p-10 border-2 border-green-300">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span className="text-4xl">💡</span>
+                Conscientização e Tratamento
+              </h2>
+              
+              <div className="space-y-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">✅</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Reconhecimento do Problema</h3>
+                      <p className="text-gray-600">Apenas 34% reconhecem ter uso problemático</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">🔍</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Busca por Ajuda Profissional</h3>
+                      <p className="text-gray-600">Somente 18% buscam terapia ou orientação</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4 mb-2">
+                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">📈</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Taxa de Sucesso no Tratamento</h3>
+                      <p className="text-gray-600">67% melhoram com acompanhamento adequado</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Fontes */}
+            <section className="bg-gray-50 rounded-2xl p-6 md:p-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="text-2xl">📚</span>
+                Fontes de Dados
+              </h3>
+              <ul className="text-gray-600 space-y-2 text-sm">
+                <li>• Organização Mundial da Saúde (OMS)</li>
+                <li>• Centro de Estudos sobre Tecnologias Web (Cetic.br)</li>
+                <li>• Associação Brasileira de Psiquiatria</li>
+                <li>• Pesquisas acadêmicas internacionais (2023-2024)</li>
+              </ul>
+              <p className="text-gray-500 text-xs mt-4 italic">
+                * Os dados apresentados são baseados em estudos científicos e levantamentos estatísticos. Os números podem variar conforme metodologia e região.
+              </p>
+            </section>
+
+            {/* Call to Action */}
+            <section className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl p-8 text-center">
+              <h3 className="text-2xl font-bold mb-4">
+                Faça Parte da Mudança
+              </h3>
+              <p className="text-purple-100 mb-6 text-lg">
+                Cada relato compartilhado ajuda a construir uma visão mais completa deste problema
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button 
+                  onClick={() => setScreen('login-familiar')}
+                  className="bg-white text-purple-600 hover:bg-purple-50 px-8 py-3 rounded-xl font-semibold transition-all shadow-lg"
+                >
+                  Compartilhar Experiência
+                </button>
+                <button 
+                  onClick={() => setScreen('conteudo')}
+                  className="bg-purple-700 hover:bg-purple-800 text-white px-8 py-3 rounded-xl font-semibold transition-all"
                 >
                   Ver Mais Conteúdos
                 </button>
@@ -1193,7 +1982,7 @@ const SobreScreen = ({ setScreen }) => {
           
           <h3 className="font-bold text-gray-900 text-xl mt-8">Como funciona?</h3>
           <ul className="space-y-2">
-            <li>✅ Familiares compartilham suas experiências de forma anônima</li>
+            <li>✅ Familiares compartilham suas experiências</li>
             <li>✅ Instituições analisam os dados para pesquisas científicas</li>
             <li>✅ Publicamos conteúdos educativos para a população</li>
             <li>✅ Geramos conscientização e ações de apoio</li>
