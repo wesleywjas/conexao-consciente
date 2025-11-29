@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Heart, Users, Building2, BookOpen, TrendingUp, Calendar, Home, Newspaper, Info, Send, BarChart3, FileText, Upload, Menu, X } from 'lucide-react';
+import { cadastrarUsuario, loginUsuario } from './services/api';
+import { criarRelato } from './services/api';
 
 const App = () => {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -122,33 +124,66 @@ const LoginFamiliarScreen = ({ setScreen }) => {
     confirmarSenha: '',
     relacao: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    if (loginData.email && loginData.senha) {
-      // Aqui você conectará com sua API de autenticação
+  const handleLogin = async () => {
+    if (!loginData.email || !loginData.senha) {
+      setError('Por favor, preencha email e senha');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await loginUsuario(loginData);
+
+      // Salvar token e dados do usuário
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
+
       alert('Login realizado com sucesso!');
       setScreen('familiar');
-    } else {
-      alert('Por favor, preencha email e senha');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao fazer login');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCadastro = () => {
+  const handleCadastro = async () => {
     if (!cadastroData.nome || !cadastroData.email || !cadastroData.senha || !cadastroData.relacao) {
-      alert('Por favor, preencha todos os campos');
+      setError('Por favor, preencha todos os campos');
       return;
     }
     if (cadastroData.senha !== cadastroData.confirmarSenha) {
-      alert('As senhas não coincidem');
+      setError('As senhas não coincidem');
       return;
     }
     if (cadastroData.senha.length < 6) {
-      alert('A senha deve ter pelo menos 6 caracteres');
+      setError('A senha deve ter pelo menos 6 caracteres');
       return;
     }
-    // Aqui você conectará com sua API de cadastro
-    alert('Cadastro realizado com sucesso!');
-    setScreen('familiar');
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const { confirmarSenha, ...dataToSend } = cadastroData;
+      const response = await cadastrarUsuario(dataToSend);
+
+      // Salvar token e dados do usuário
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
+
+      alert('Cadastro realizado com sucesso!');
+      setScreen('familiar');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao cadastrar');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -325,13 +360,28 @@ const LoginFamiliarScreen = ({ setScreen }) => {
 };
 
 const FamiliarScreen = ({ formData, setFormData, submitted, setSubmitted, setScreen }) => {
-  const handleSubmit = () => {
-    if (formData.convivencia && formData.mudancas && formData.ajuda) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async () => {
+    if (!formData.convivencia || !formData.mudancas || !formData.ajuda) {
+      setError('Por favor, preencha todos os campos');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      await criarRelato(formData);
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setFormData({ convivencia: '', mudancas: '', ajuda: '' });
       }, 4000);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Erro ao enviar relato');
+      setLoading(false);
     }
   };
 
